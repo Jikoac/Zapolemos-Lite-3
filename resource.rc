@@ -1,0 +1,22 @@
+1 VERSIONINFO
+FILEVERSION 0,3,3,0
+PRODUCTVERSION 0,3,3,0
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", "Jikoac Games"
+            VALUE "FileDescription", "The third iteration of Zapolemos Lite.\r\nThe original 2 versions were written in MicroPython.\r\nThis is the first version written in C++."
+            VALUE "ProductName", "Zapolemos Lite 3"
+        END
+    END
+END
+GAMEICON ICON "c:\Users\grant\Documents\Programs\Games\ZL3\Icons\icon.ico"
+OLDGAMEICON ICON "c:\Users\grant\Documents\Programs\Games\ZL3\Icons\iconOutdated.ico"
+VERSIONICON ICON "c:\Users\grant\Documents\Programs\Games\ZL3\Icons\iconVersion.ico"
+HEROICON ICON "c:\Users\grant\Documents\Programs\Games\ZL3\Icons\iconHero.ico"
+STRINGTABLE
+BEGIN
+	1, "C:\Users\grant\Executables\ZapolemosLite3\Heroes\"
+END
