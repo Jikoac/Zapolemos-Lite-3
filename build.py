@@ -1,56 +1,62 @@
 import subprocess
 import os
+import json
 
-is_preview = False
-name = '"Zapolemos Lite 3"' if is_preview else '"Zapolemos Lite 3 (Preview)"'
-version = [0, 4, 0, 0]
 directory = os.path.dirname(os.path.abspath(__file__))
-save_location = input("Save file to: ").replace('"','') or directory
+
+with open(directory+"\\data\\manifest.json", "r") as f:
+    manifest = json.load(f)
+    name = manifest['name']
+    is_preview = manifest['preview']
+    version = manifest['version']
+    modded = manifest['modded']
+    f.close()
+
+name = f'{name} {'(Preview, Modded)' if modded else '(Preview)'}' if is_preview else f'{name} {'(Modded)' if modded else ''}'
+if os.path.exists(directory+"\\data\\path.txt"):
+    with open(directory+"\\data\\path.txt", "r") as f:
+        save_location = f.read()
+        save_location = save_location.replace('"','')
+else:
+    save_location = input("Save file to: ").replace('"','') or directory.replace('"','')
+
+game_version = '.'.join(map(str, version))+(' Preview' if is_preview else '')+(' Modded' if modded else '')
+display_version = ','.join(map(str, version))
+icon_path =directory + ("\\Icons\\preview" if is_preview else "\\Icons")   
+
+code = {
+    '@version': display_version,
+    '@name': name,
+    '@game_version': game_version,
+    '@save_path': save_location,
+    '@path': directory,
+    '@icon_path': icon_path,
+}
 
 def read_list(text:list = []): return ','.join(map(str, text))
 
 print("Building files...")
-resources = f'''1 VERSIONINFO
-FILEVERSION {read_list(version)}
-PRODUCTVERSION {read_list(version)}
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "040904E4"
-        BEGIN
-            VALUE "CompanyName", "Jikoac Games"
-            VALUE "FileDescription", "The third iteration of Zapolemos Lite.\\r\\nThe original 2 versions were written in MicroPython.\\r\\nThis is the first version written in C++."
-            VALUE "ProductName", {name}
-        END
-    END
-END
-GAMEICON ICON "{directory}\\Icons\\icon.ico"
-OLDGAMEICON ICON "{directory}\\Icons\\iconOutdated.ico"
-VERSIONICON ICON "{directory}\\Icons\\iconVersion.ico"
-HEROICON ICON "{directory}\\Icons\\iconHero.ico"
-STRINGTABLE
-BEGIN
+with open(directory+"\\data\\resources.txt", "r") as f:
+    resources = f.read()
+    for x,y in code.items():
+        resources = resources.replace(x, y)
+    f.close()
 
-    1, "{'.'.join(map(str, version))} {'Preview' if is_preview else ''}"
-    2, {name}
-
-    101, "Version: "
-    102, "Name: "
-
-	201, "{save_location}\\Heroes\\\\"
-END'''
-
-compile_script=f'''windres "{directory}\\resource.rc" -o "{directory}\\resource.o"
-g++ "{directory}\\main.cpp" "{directory}\\resource.o" -o "{save_location}\\Zapolemos Lite 3.exe"
-del /F /Q "{directory}\\resource.o"'''
+with open(directory+'\\data\\compile.txt', 'r') as f:
+    compile_script = f.read()
+    for x,y in code.items():
+        compile_script = compile_script.replace(x, y)
+    f.close()
 
 with open(directory+"\\resource.rc", "w") as f:
     f.write(resources)
+    f.close()
 
 with open(directory+"\\compile.bat", "w") as f:
     f.write(compile_script)
+    f.close()
 
 print("Compiling...")
 subprocess.run([directory+"\\compile.bat"], shell=True)
 
-print("Done!")
+print("Done! You can find the file in "+save_location)

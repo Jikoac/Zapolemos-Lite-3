@@ -11,6 +11,14 @@
 
 using namespace std;
 
+string StringID(UINT id) {
+    char buffer[256];
+    if (LoadString(GetModuleHandle(NULL), id, buffer, sizeof(buffer))) {
+        return string(buffer);
+    }
+    return "[String not found]";
+}
+
 // not \xCE\xB2
 const string defaultName = "User";
 const string version = StringID(101)+StringID(1);
@@ -26,13 +34,6 @@ int randomize (int max = 10) {
     return value;
 }
 
-string StringID(UINT id) {
-    char buffer[256];
-    if (LoadString(GetModuleHandle(NULL), id, buffer, sizeof(buffer))) {
-        return string(buffer);
-    }
-    return "[String not found]";
-}
 
 string removeFrom(string& str, const string& toRemove) {
     size_t pos;

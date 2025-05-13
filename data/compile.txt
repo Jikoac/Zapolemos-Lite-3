@@ -1,0 +1,2 @@
+windres "@path\resource.rc" -o "@path\resource.o"
+g++ "@path\main.cpp" "@path\resource.o" -o "@save_path\@name.exe"
