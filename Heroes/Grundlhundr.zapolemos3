@@ -1,0 +1,9 @@
+{
+    "name":"Grundlhundr",
+    "health":8,
+    "damage":4,
+    "defense":0,
+    "skill":6,
+    "recovery":3,
+    "healing":5
+}

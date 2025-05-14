@@ -19,18 +19,25 @@ HEROICON ICON "@icon_path\iconHero.ico"
 STRINGTABLE
 BEGIN
 
-    1, "@game_version"
-    2, "@name"
+	1, "@game_version"
+	2, "@name"
 
-    101, "Version: "
-    102, "Name: "
-    103, "1: Attack\n2: Heal\nInput: "
-    104, "\nYou win!"
-    105, "\nYou lose!"
-    106, "User"
-    107, "Enemy"
-    108, "Level"
-    109, "Hello, "
+	101, "Version: "
+	102, "Name: "
+	103, "1: Attack\n2: Heal\nInput: "
+ 	104, "\nYou win!"
+	105, "\nYou lose!"
+	106, "User"
+	107, "Enemy"
+	108, "Level"
+	109, "Hello, "
 
 	201, "@save_path\Heroes\\"
+	202, "@path\Heroes\\"
+
+	300, "0.2.0:\n•changed event AI"
+	301, "0.3.0:\n•added character selection"
+	302, "0.4.0:\n•added more command-line arguments"
+	303, "0.5.0:\n•changed how command-line arguments are handled.\n•added constructor for easy compilation of code"
+	304, "0.6.0:\n•added counter attack\n•added better character selection handling\n•added built-in heroes\n•added improved settings capabilities"
 END

@@ -1,7 +1,8 @@
 {
     "name": "Zapolemos Lite 3",
-    "version": [0,5,1,0],
-    "preview": false,
+    "version": [0,6,0,0],
+    "preview": true,
     "modded": false,
-    "constructor_version": [0,2,0,0]
+    "constructor_version": [0,2,0,1],
+    "preview_number": 5
 }

@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <windows.h>
+#include <filesystem>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ const string defaultName = StringID(106);
 const string version = StringID(101)+StringID(1);
 int level;
 int seed;
+bool counter_enabled = true;
 string player_data;
 string enemy_data;
 string enemyName = StringID(107);
@@ -35,6 +37,10 @@ int randomize (int max = 10) {
     return value;
 }
 
+void changeSettings(string settings) {
+    nlohmann::json json = nlohmann::json::parse(settings);
+    counter_enabled = json.value("counter_attack",true);
+}
 
 string removeFrom(string& str, const string& toRemove) {
     size_t pos;
@@ -44,7 +50,7 @@ string removeFrom(string& str, const string& toRemove) {
     return str;
 }
 
-void readArg (string arg) {
+int readArg (string arg) {
         if ((arg.rfind("C:/", 0) == 0) or (arg.rfind("C:\\", 0) == 0)) {
             std::ifstream file(arg);
             std::stringstream buffer;
@@ -52,28 +58,69 @@ void readArg (string arg) {
             player_data = buffer.str();
         }
         else if (arg.rfind("player=", 0) == 0) {
-            arg = StringID(201) + removeFrom(arg, "player=") + ".zapolemos3";
+            arg = removeFrom(arg, "player=");
+            filesystem::path filePathSave(StringID(201)+arg + ".zapolemos3");
+            filesystem::path filePathSource(StringID(202)+arg + ".zapolemos3");
+            filesystem::path filePathDirect(arg);
+            if (filesystem::exists(filePathSave)) {
+                arg = StringID(201) + arg + ".zapolemos3";
+            }
+            else if (filesystem::exists(filePathSource)) {
+                arg = StringID(202) + arg + ".zapolemos3";
+            }
+            else if (!filesystem::exists(filePathDirect)) {
+                return 1;
+            }
             std::ifstream file(arg);
             std::stringstream buffer;
             buffer << file.rdbuf();
             player_data = buffer.str();
         }
         else if (arg.rfind("enemy=", 0) == 0) {
-            arg = StringID(201) + removeFrom(arg, "enemy=") + ".zapolemos3";
+            arg = removeFrom(arg, "enemy=");
+            filesystem::path filePathSave(StringID(201)+arg + ".zapolemos3");
+            filesystem::path filePathSource(StringID(202)+arg + ".zapolemos3");
+            filesystem::path filePathDirect(arg);
+            if (filesystem::exists(filePathSave)) {
+                arg = StringID(201) + arg + ".zapolemos3";
+            }
+            else if (filesystem::exists(filePathSource)) {
+                arg = StringID(202) + arg + ".zapolemos3";
+            }
+            else if (!filesystem::exists(filePathDirect)) {
+                return 1;
+            }
             std::ifstream file(arg);
             std::stringstream buffer;
             buffer << file.rdbuf();
             enemy_data = buffer.str();
         }
+        else if (arg == "counter=false") {
+            counter_enabled = false;
+        }
+        else if (arg.rfind("settings=",0) == 0) {
+            arg = removeFrom(arg, "settings=");
+            if (arg.rfind("C:",0) == 0) {
+                std::ifstream file(arg);
+                std::stringstream buffer;
+                buffer << file.rdbuf();
+                changeSettings(buffer.str());
+            } else {
+                changeSettings(arg);
+            }
+        }
+        return 0;
 }
 
 class player {
     public:
     string name;
-    bool is_AI;
+    bool is_AI, was_attacked;
     int health, damage, maxHealth, skill, defense, recovery, healing;
+    float counter_multiplier;
 
     player(const string& jsonData) {
+        was_attacked = false;
         nlohmann::json json = nlohmann::json::parse(jsonData);
         name = json.value("name", defaultName);
         is_AI = json.value("is_AI", false);
@@ -83,9 +130,14 @@ class player {
         defense = json.value("defense", 0);
         recovery = json.value("recovery", 3);
         healing = json.value("healing", 4);
+        counter_multiplier = json.value("counter", 1.5);
     }
     void display () {
-        cout << name << endl << health << "/" << maxHealth << endl << damage << endl;
+        if (was_attacked and counter_enabled) {
+            cout << name << endl << health << "/" << maxHealth << endl << round(damage*counter_multiplier) << " +" << (counter_multiplier-1)*100 << "%" << endl;
+        } else {
+            cout << name << endl << health << "/" << maxHealth << endl << damage << endl;
+        }
     }
     pair<string, bool> ai (player & target) {
         bool success;
@@ -97,7 +149,7 @@ class player {
         float ownHP = myHealth / maxHealth;
         float chance = 5 + round (ownHP - targetHP * level * 0.5);
         if (randomize()<=chance) {
-            success = heal();
+            success = heal(target);
             action = "heal";
         }
         else {
@@ -109,12 +161,18 @@ class player {
     bool attack (player & target) {
         int chance = skill - target.defense;
         if (randomize() <= chance) {
-            target.health -= damage;
+            if (was_attacked and counter_enabled) {
+                target.health -= round(damage * counter_multiplier);
+            } else{
+                target.health -= damage;
+            }
+            target.was_attacked = true;
             return true;
         }
         return false;
     }
-    bool heal () {
+    bool heal (player & target) {
+        target.was_attacked = false;
         if (randomize() <= recovery) {
             health = min (health + healing, maxHealth);
             return true;
@@ -127,7 +185,7 @@ class player {
         }
         else {
             if (input == 2) {
-                heal();
+                heal(target);
             }
             else {
                 attack(target);
