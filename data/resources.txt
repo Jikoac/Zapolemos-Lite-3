@@ -24,6 +24,13 @@ BEGIN
 
     101, "Version: "
     102, "Name: "
+    103, "1: Attack\n2: Heal\nInput: "
+    104, "\nYou win!"
+    105, "\nYou lose!"
+    106, "User"
+    107, "Enemy"
+    108, "Level"
+    109, "Hello, "
 
 	201, "@save_path\Heroes\\"
 END

@@ -20,12 +20,13 @@ string StringID(UINT id) {
 }
 
 // not \xCE\xB2
-const string defaultName = "User";
+const string defaultName = StringID(106);
 const string version = StringID(101)+StringID(1);
 int level;
 int seed;
 string player_data;
 string enemy_data;
+string enemyName = StringID(107);
 
 int randomize (int max = 10) {
     srand(seed);
@@ -140,10 +141,10 @@ void start(string &name, int &level) {
         cout << StringID(102);
         getline ( cin, name );
         name = (name != "") ? name : defaultName;
-        cout << "Hello, " << name << "!" << endl;
+        cout << StringID(109) << name << "!" << endl;
         player_data = "{\"name\":\""+name+"\"}";
     }
-    cout << "Level (0-10): ";
+    cout << StringID(108)+" (0-10): ";
     cin >> level;
     level = max(0,min(level,10));
 }
@@ -154,7 +155,7 @@ int main (int argc, char* argv[]) {
         readArg(argv[argno]);
     }
     if (enemy_data.empty()) {
-        enemy_data = "{\"is_AI\":true,\"name\":\"Enemy\"}";
+        enemy_data = "{\"is_AI\":true,\"name\":\""+enemyName+"\"}";
     }
     cout << StringID(2) << endl;
     cout << version << endl;
@@ -165,7 +166,7 @@ int main (int argc, char* argv[]) {
     int input;
     while ((User.health>0) and (Enemy.health>0)) {
         User.display();
-        cout << "1: Attack\n2: Heal\nInput: ";
+        cout << StringID(103);
         cin >> input;
         User.act(Enemy, input);
         Enemy.act(User);
@@ -173,10 +174,10 @@ int main (int argc, char* argv[]) {
     }
     bool victory = (Enemy.health<User.health);
     if(victory) {
-        cout <<"\nYou win!";
+        cout <<StringID(104);
     }
     else {
-        cout << "\nYou lose!";
+        cout << StringID(105);
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
     return 0;

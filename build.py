@@ -12,7 +12,7 @@ with open(directory+"\\data\\manifest.json", "r") as f:
     modded = manifest['modded']
     f.close()
 
-name = f'{name} {'(Preview, Modded)' if modded else '(Preview)'}' if is_preview else f'{name} {'(Modded)' if modded else ''}'
+name = f'{name}{' (Preview, Modded)' if modded else ' (Preview)'}' if is_preview else f'{name}{' (Modded)' if modded else ''}'
 if os.path.exists(directory+"\\data\\path.txt"):
     with open(directory+"\\data\\path.txt", "r") as f:
         save_location = f.read()
@@ -55,6 +55,9 @@ with open(directory+"\\resource.rc", "w") as f:
 with open(directory+"\\compile.bat", "w") as f:
     f.write(compile_script)
     f.close()
+
+if not os.path.exists(save_location):
+    os.makedirs(save_location)
 
 print("Compiling...")
 subprocess.run([directory+"\\compile.bat"], shell=True)
