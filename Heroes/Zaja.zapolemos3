@@ -1,0 +1,10 @@
+{
+    "name":"Zaja",
+    "health":9,
+    "damage":4,
+    "defense":2,
+    "skill":5,
+    "recovery":3,
+    "healing":5,
+    "counter":1.8
+}

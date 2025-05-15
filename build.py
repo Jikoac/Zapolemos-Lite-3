@@ -10,6 +10,7 @@ with open(directory+"\\data\\manifest.json", "r") as f:
     is_preview = manifest['preview']
     version = manifest['version']
     modded = manifest['modded']
+    preview_number = manifest['preview_number']
     f.close()
 
 name = f'{name}{' (Preview, Modded)' if modded else ' (Preview)'}' if is_preview else f'{name}{' (Modded)' if modded else ''}'
@@ -62,4 +63,5 @@ if not os.path.exists(save_location):
 print("Compiling...")
 subprocess.run([directory+"\\compile.bat"], shell=True)
 
+print('Version: '+game_version + ((' '+str(preview_number)) if is_preview and preview_number else ''))
 print("Done! You can find the file in "+save_location)
