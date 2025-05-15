@@ -63,5 +63,5 @@ if not os.path.exists(save_location):
 print("Compiling...")
 subprocess.run([directory+"\\compile.bat"], shell=True)
 
-print('Version: '+game_version + (' '+str(preview_number)) if is_preview and preview_number else '')
+print('Version: '+game_version + ((' '+str(preview_number)) if is_preview and preview_number else ''))
 print("Done! You can find the file in "+save_location)
