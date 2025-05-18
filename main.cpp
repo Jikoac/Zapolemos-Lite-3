@@ -52,6 +52,26 @@ string removeFrom(string& str, const string& toRemove) {
     return str;
 }
 
+bool loadHero(string fileName, string & output) {
+    filesystem::path filePathSave(StringID(201)+ fileName + ".zapolemos3");
+    filesystem::path filePathSource(StringID(202)+ fileName + ".zapolemos3");
+    filesystem::path filePathDirect(fileName);
+    if (filesystem::exists(filePathSave)) {
+        fileName = StringID(201) + fileName + ".zapolemos3";
+    }
+    else if (filesystem::exists(filePathSource)) {
+        fileName = StringID(202) + fileName + ".zapolemos3";
+    }
+    else if (!filesystem::exists(filePathDirect)) {
+        return false;
+    }
+    std::ifstream file(fileName);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    output = buffer.str();
+    return true;
+}
+
 bool readArg (string arg) {
         if ((arg.rfind("C:/", 0) == 0) or (arg.rfind("C:\\", 0) == 0)) {
             std::ifstream file(arg);
@@ -61,41 +81,11 @@ bool readArg (string arg) {
         }
         else if (arg.rfind("player=", 0) == 0) {
             arg = removeFrom(arg, "player=");
-            filesystem::path filePathSave(StringID(201)+arg + ".zapolemos3");
-            filesystem::path filePathSource(StringID(202)+arg + ".zapolemos3");
-            filesystem::path filePathDirect(arg);
-            if (filesystem::exists(filePathSave)) {
-                arg = StringID(201) + arg + ".zapolemos3";
-            }
-            else if (filesystem::exists(filePathSource)) {
-                arg = StringID(202) + arg + ".zapolemos3";
-            }
-            else if (!filesystem::exists(filePathDirect)) {
-                return false;
-            }
-            std::ifstream file(arg);
-            std::stringstream buffer;
-            buffer << file.rdbuf();
-            player_data = buffer.str();
+            return loadHero(arg, player_data);
         }
         else if (arg.rfind("enemy=", 0) == 0) {
             arg = removeFrom(arg, "enemy=");
-            filesystem::path filePathSave(StringID(201)+arg + ".zapolemos3");
-            filesystem::path filePathSource(StringID(202)+arg + ".zapolemos3");
-            filesystem::path filePathDirect(arg);
-            if (filesystem::exists(filePathSave)) {
-                arg = StringID(201) + arg + ".zapolemos3";
-            }
-            else if (filesystem::exists(filePathSource)) {
-                arg = StringID(202) + arg + ".zapolemos3";
-            }
-            else if (!filesystem::exists(filePathDirect)) {
-                return false;
-            }
-            std::ifstream file(arg);
-            std::stringstream buffer;
-            buffer << file.rdbuf();
-            enemy_data = buffer.str();
+            return loadHero(arg, enemy_data);
         }
         else if (arg == "counter=false") {
             counter_enabled = false;
@@ -196,26 +186,6 @@ class player {
     }
 };
 
-bool loadHero(string fileName, string & output) {
-    filesystem::path filePathSave(StringID(201)+ fileName + ".zapolemos3");
-    filesystem::path filePathSource(StringID(202)+ fileName + ".zapolemos3");
-    filesystem::path filePathDirect(fileName);
-    if (filesystem::exists(filePathSave)) {
-        fileName = StringID(201) + fileName + ".zapolemos3";
-    }
-    else if (filesystem::exists(filePathSource)) {
-        fileName = StringID(202) + fileName + ".zapolemos3";
-    }
-    else if (!filesystem::exists(filePathDirect)) {
-        return false;
-    }
-    std::ifstream file(fileName);
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    ouput = buffer.str();
-    return true;
-}
-
 void start(string &name, int &level) {
     if (choose_characters) {
         string heroName;
@@ -227,7 +197,7 @@ void start(string &name, int &level) {
         cout << "Enemy: ";
         getline (cin, heroName);
         loadHero(heroName, enemy_data);
-
+    }
     if (player_data.empty()) {
         cout << StringID(102);
         getline ( cin, name );

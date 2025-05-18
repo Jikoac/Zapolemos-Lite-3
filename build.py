@@ -61,7 +61,11 @@ if not os.path.exists(save_location):
     os.makedirs(save_location)
 
 print("Compiling...")
-subprocess.run([directory+"\\compile.bat"], shell=True)
+compiled = subprocess.run([directory+"\\compile.bat"], shell=True)
+subprocess.run('del /F /Q "{directory}\\compile.bat"', shell = True)
 
-print('Version: '+game_version + ((' '+str(preview_number)) if is_preview and preview_number else ''))
-print("Done! You can find the file in "+save_location)
+if compiled.returncode == 0:
+    print('Version: '+game_version + ((' '+str(preview_number)) if is_preview and preview_number else ''))
+    print("Done! You can find the file in "+save_location)
+else:
+    print('Process failed! If there is a problem with the code, please send feedback at https://github.com/Jikoac/Zapolemos-Lite-3/issues/new')

@@ -5,7 +5,8 @@ but I finally made the switch to C++
 Currently this is only available for Windows
 ## Dependencies
 [MinGW](https://mingw-w64.org) (for compiling C++)  
-[Python](https://www.python.org) 
+[Python](https://www.python.org)  
+[nlohmann/json](https://github.com/nlohmann/json/blob/develop/single_include/nlohmann/json.hpp) (for json parsing)  
 ## Setup
 Run build.py to compile the game code  
 
