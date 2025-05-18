@@ -1,0 +1,10 @@
+{
+    "name":"Skyhundr",
+    "health":15,
+    "damage":3,
+    "defense":1,
+    "skill":4,
+    "recovery":4,
+    "healing":5,
+    "counter":1.4
+}
